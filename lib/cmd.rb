@@ -1,5 +1,18 @@
 require 'yaml'
 
+class String
+  # colorization
+  def colorize(text, color_code)
+    "\e[#{color_code}m#{text}\e[0m"
+  end
+
+  def red; colorize(self, 31); end
+  def green; colorize(self, 32); end
+  def yellow; colorize(self, 33); end
+  def pink; colorize(self, 35); end
+end
+
+
 module BoilerPlater
 
   module Cmd
@@ -26,13 +39,18 @@ module BoilerPlater
       end
       id = find_alias(id)
       puts
-      puts "Setting up new project using %s" % BoilerPlater.show(id)['description']
+      puts "Setting up new project using %s\n\n" % BoilerPlater.show(id)['description']
       BoilerPlater.sections(BoilerPlater.get(id)).each do |part|
-        puts '[%-8s] %s' % [(part.content? ? 'create' : 'download'), part.file]
+        puts '  [%-8s] %s' % [(part.content? ? 'create  '.green : 'download'.yellow), part.path]
         part.download_content! unless part.content?
-        f.save!
+        if part.exists?
+          print '  File already exists, overwrite? [y,N]: '
+          part.save! if STDIN.gets.chop.strip == 'Y'
+        else
+          part.save!
+        end
       end
-      "done.\n"
+      "\ndone.\n"
     end
 
     def self.alias(action, gist_id, name)

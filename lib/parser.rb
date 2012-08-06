@@ -85,6 +85,10 @@ module BoilerPlater
         File.join(BoilerPlater.config.prefix || '.', File.dirname(@file), File.basename(@file))
       end
 
+      def exists?
+        File.exists? path
+      end
+
       def download_content!
         @content = open(metadata[:url]).read
       end
