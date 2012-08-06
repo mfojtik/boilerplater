@@ -1,43 +1,39 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'optparse'
+require 'trollop'
 
 $:.unshift File::expand_path(File.join(File.dirname(__FILE__), '..'))
 
 require 'lib/boilerplater.rb'
+require 'lib/cmd.rb'
 
-options = {}
-
-optparse = OptionParser.new do |opts|
-  opts.on( '-s', '--search BOILERPLATE', 'Search for specific boilerplate') do |keyword|
-    puts BoilerPlater.search keyword
-    exit 0
-  end
-  opts.on '-u', '--use ID', 'Download and install specific boilerplate' do |id|
-    options[:id] = id
-  end
-  opts.on '-p', '--prefix PREFIX', 'Use prefix for installation' do |prefix|
-    options[:prefix] = prefix
-  end
-  opts.on('-h', '--help') { options[:help] = true }
+opts = Trollop::options do
+  opt :prefix, "Prefix for boilerplate files", :short => 'p', :default => '.'
 end
 
-optparse.parse!
-
-if options[:help]
- puts optparse
- exit(0)
+if ARGV[0].nil?
+  puts 'Usage: bp command [id|alias|action] [options]'
+  puts
+  puts "Commands:\n\n"
+  puts '  bp list                         - List all boilerplates'
+  puts '  bp search [name]                - Search for boilerplate'
+  puts '  bp show   [id|alias]            - Show boilerplate details'
+  puts '  bp use    [id|alias]            - Apply boilerplate'
+  puts '  bp alias  create [id]    [name] - Create alias for boilerplate'
+  puts '  bp alias  delete [name]         - Delete alias'
+  puts '  bp alias  list                  - List all aliases'
+  puts
+  system("#{__FILE__} --help")
 end
 
-BoilerPlater.setup do |b|
-  b.prefix = options[:prefix] || '.'
-end
+exit(0) if opts[:help]
 
-if options[:id]
-  BoilerPlater.use(options[:id])
-else
-  puts "ERROR: You must specify the boiler plate ID"
-  exit 1
+puts case ARGV[0]
+  when 'list' then BoilerPlater::Cmd.list
+  when 'search' then BoilerPlater::Cmd.search(ARGV[1])
+  when 'show' then BoilerPlater::Cmd.show(ARGV[1])
+  when 'use' then BoilerPlater::Cmd.use(ARGV[1], opts)
+  when 'alias' then BoilerPlater::Cmd.alias(ARGV[1], ARGV[2], ARGV[3])
+  else ''
 end
-

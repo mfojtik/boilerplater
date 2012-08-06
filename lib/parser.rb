@@ -14,6 +14,10 @@ module BoilerPlater
     Gist.read(gist_id)
   end
 
+  def self.show(gist_id)
+    JSON.parse(open(Gist::GIST_URL % gist_id).read)
+  end
+
   def self.use(gist_id)
     BoilerPlater.sections(get(gist_id)).each do |f|
       f.download_content! unless f.content?
@@ -26,7 +30,7 @@ module BoilerPlater
   end
 
   def self.search(name)
-    list.find { |k, v| v =~ /#{name}/ }.first
+    list.find { |k, v| v =~ /#{name}/ }.join(' | ')
   end
 
   def self.sections(content)

@@ -10,7 +10,3 @@ require 'open-uri'
 require 'pp'
 
 require_relative './parser.rb'
-
-#BoilerPlater.setup do |b|
-#  b.prefix = 'test/'
-#end
