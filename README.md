@@ -51,6 +51,17 @@ To fetch and use boilerplate, just type:
 
     $ bp use 3265768
 
+    Setting up new project using BPR: Sample template
+
+      [create  ] test/./Gemfile
+      [create  ] test/./app.rb
+      [create  ] test/views/index.haml
+      [create  ] test/views/layout.haml
+      [download] test/public/css/bootstrap.css
+      [download] test/public/css/bootstrap-responsive.css
+
+    done.
+
 The [Sinatra application](https://gist.github.com/3265768) boilerplate
 will be installed into the current directory. If you want to install it
 somewhere else, use the '--prefix' parameter.
