@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'optparse'
+
+$:.unshift File::expand_path(File.join(File.dirname(__FILE__), '..'))
+
+require 'lib/boilerplater.rb'
+
+options = {}
+
+optparse = OptionParser.new do |opts|
+  opts.on( '-s', '--search BOILERPLATE', 'Search for specific boilerplate') do |keyword|
+    puts BoilerPlater.search keyword
+    exit 0
+  end
+  opts.on '-u', '--use ID', 'Download and install specific boilerplate' do |id|
+    options[:id] = id
+  end
+  opts.on '-p', '--prefix PREFIX', 'Use prefix for installation' do |prefix|
+    options[:prefix] = prefix
+  end
+  opts.on('-h', '--help') { options[:help] = true }
+end
+
+optparse.parse!
+
+if options[:help]
+ puts optparse
+ exit(0)
+end
+
+BoilerPlater.setup do |b|
+  b.prefix = options[:prefix] || '.'
+end
+
+if options[:id]
+  BoilerPlater.use(options[:id])
+else
+  puts "ERROR: You must specify the boiler plate ID"
+  exit 1
+end
+
